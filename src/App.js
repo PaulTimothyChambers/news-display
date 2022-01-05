@@ -1,12 +1,17 @@
-import './App.css';
 import React, { Component } from 'react';
 import NewsContainer from './NewsContainer.js';
 import SearchForm from './SearchForm.js';
+import ArticleDetail from './ArticleDetail.js';
 import { loadArticles } from './apiCalls.js';
+import './App.css';
 
 class App extends Component {
   state = {
     articles: [],
+    articleView: {
+      abstract: '',
+      imgSrc: ''
+    },
     section: '',
     noResults: ''
   }
@@ -19,8 +24,17 @@ class App extends Component {
 
   clearState = () => {
     this.setState({
-      articles: []
+      articles: [],
+      articleView: {
+        abstract: '',
+        imgSrc: ''
+      }
     })
+  }
+
+  getArticleDetails = (abstract, img) => {
+    this.clearState()
+    this.setState({ articleView: { abstract: abstract, imgSrc: img }} )
   }
 
   searchArticles = (searchInput) => {
@@ -49,11 +63,11 @@ class App extends Component {
             className="logo"
           />
         </div>
-        <h3>What category of articles would you like to see? (choose below)</h3>
-        <button onClick={ () => this.loadArticles('home') }>NY Times: Home Page News</button>
-        <button onClick={ () => this.loadArticles('world') }>NY Times: World News</button>
-        <button onClick={ () => this.loadArticles('us') }>NY TImes: US News</button>
-        <div>
+        <h3>Which category of articles would you like to see? (choose below)</h3>
+        <button onClick={ () => this.loadArticles('home') }>Home Page Articles</button>
+        <button onClick={ () => this.loadArticles('world') }>World News</button>
+        <button onClick={ () => this.loadArticles('us') }>US News</button>
+        <div className="article-container">
           {
             this.state.articles.length > 0 &&
               <SearchForm
@@ -65,7 +79,17 @@ class App extends Component {
             this.state.noResults &&
               <p>{ this.state.noResults }</p>
           }
-          <NewsContainer articles={ this.state.articles }/>
+          {
+            this.state.articleView.abstract &&
+              <ArticleDetail
+                article={ this.state.articleView }
+                returnHome={ this.loadArticles }
+              />
+          }
+          <NewsContainer
+            articles={ this.state.articles }
+            getArticleDetails={ this.getArticleDetails }
+          />
         </div>
       </main>
     )
