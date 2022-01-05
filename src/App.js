@@ -7,12 +7,14 @@ import { loadArticles } from './apiCalls.js';
 class App extends Component {
   state = {
     articles: [],
-    section: ''
+    section: '',
+    noResults: ''
   }
 
   loadArticles = (section) => {
     this.clearState()
-    loadArticles(section).then(data => this.setState({ articles: data.results, section: section }))
+    // loadArticles(section).then(data => console.log(data.results))
+    loadArticles(section).then(data => this.setState({ articles: data.results, section: section, noResults: '' }))
   }
 
   clearState = () => {
@@ -22,7 +24,20 @@ class App extends Component {
   }
 
   searchArticles = (searchInput) => {
-    
+    const filteredResults = this.state.articles.filter(article => {
+      const includedInTitle = article.title.toLowerCase().includes(searchInput.toLowerCase())
+      const includedInAbstract = article.abstract.toLowerCase().includes(searchInput.toLowerCase())
+      if (includedInTitle || includedInAbstract) {
+        return article
+      }
+    })
+
+    if (filteredResults.length) {
+      this.setState({ articles: filteredResults })
+
+    } else {
+      this.setState({ noResults: `There are no results for "${searchInput}"` })
+    }
   }
 
   render() {
@@ -45,6 +60,10 @@ class App extends Component {
                 section={ this.state.section }
                 searchArticles={ this.searchArticles }
               />
+          }
+          {
+            this.state.noResults &&
+              <p>{ this.state.noResults }</p>
           }
           <NewsContainer articles={ this.state.articles }/>
         </div>
