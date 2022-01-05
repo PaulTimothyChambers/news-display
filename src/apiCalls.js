@@ -7,8 +7,12 @@ const checkResponse = (response) => {
   return response.json()
 }
 
-function loadWorldArticles() {
-  return fetch(`${apiEndpoint}/world.json?api-key=2ehzLoKkCXtF2lzzbaK2MCq8En9hZaNA `)
+function loadArticles(section) {
+  return fetch(`${apiEndpoint}/${section}.json?api-key=2ehzLoKkCXtF2lzzbaK2MCq8En9hZaNA `)
     .then(response => checkResponse(response))
 }
 // 2ehzLoKkCXtF2lzzbaK2MCq8En9hZaNA
+
+export {
+  loadArticles
+}
